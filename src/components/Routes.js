@@ -74,8 +74,13 @@ import UserLogout from "./user/UserLogout.js";
 import Register from "./Register.js";
 import RegisterExist from "./Register_exist.js";
 import Add_construction_empsal from "./Add_construction_empsal.js";
-import test from "./test.js";
 import Test from "./test.js";
+import ConstructionRegister from "./user/construction/register.js";
+import ConstructionAddExpenses from "./user/construction/addExpenses.js";
+import ConstructionAddIncome from "./user/construction/addIncome.js";
+import ConstructionViewExpenses from "./user/construction/viewExpenses.js";
+import ConstructionViewIncome from "./user/construction/viewIncome.js";
+import PaymentHistory from "./user/construction/paymentHistory.js";
 
 export const PATH = {
   HOME: "/",
@@ -154,6 +159,12 @@ export const PATH = {
   USERVIEWCONSTRUCTIONS: "/user_viewconstructions",
   USERLOGOUT: "/user_logout",
   TEST: "/test",
+  CONSTRUCTION_REGISTER: "/construction_register",
+  CONSTRUCTION_ADD_EXPENSES: "/construction_add_expenses",
+  CONSTRUCTION_ADD_INCOME: "/construction_add_income",
+  CONSTRUCTION_VIEW_EXPENSES: "/construction_view_expenses",
+  CONSTRUCTION_VIEW_INCOME: "/construction_view_income",
+  CONSTRUCTION_PAYMENT_HISTORY: "/construction_payment_history",
 };
 
 export const publicRoute = [
@@ -467,5 +478,20 @@ export const userRoute = [
   {
     Component: Test,
     path: PATH.TEST,
+  },
+  { Component: ConstructionRegister, path: PATH.CONSTRUCTION_REGISTER },
+  { Component: ConstructionAddExpenses, path: PATH.CONSTRUCTION_ADD_EXPENSES },
+  { Component: ConstructionAddIncome, path: PATH.CONSTRUCTION_ADD_INCOME },
+  {
+    Component: ConstructionViewExpenses,
+    path: PATH.CONSTRUCTION_VIEW_EXPENSES,
+  },
+  {
+    Component: ConstructionViewIncome,
+    path: PATH.CONSTRUCTION_VIEW_INCOME,
+  },
+  {
+    Component: PaymentHistory,
+    path: PATH.CONSTRUCTION_PAYMENT_HISTORY,
   },
 ];

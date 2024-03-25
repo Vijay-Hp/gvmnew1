@@ -23,6 +23,7 @@ import {
   Routes,
   Link,
   Outlet,
+  useNavigate,
 } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -44,6 +45,10 @@ import InputBase from "@mui/material/InputBase";
 import { NavbarStyle } from "./style";
 import Dropdown from "react-bootstrap/Dropdown";
 import { PATH } from "../Routes.js";
+import { Collapse } from "@mui/material";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import StarBorder from "@mui/icons-material/StarBorder";
 
 const drawerWidth = 240;
 
@@ -146,7 +151,11 @@ export default function UserNavbar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [activeItem, setActiveItem] = useState("user_dashboard"); // Initialize with "dashboard"
-
+  const [open_c, setOpen_c] = useState(false);
+  const navigate = useNavigate();
+  const handleClick = () => {
+    setOpen_c(!open_c);
+  };
   //set as default Dashboard activated in Navbar
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -167,6 +176,10 @@ export default function UserNavbar() {
 
   const handleItemClick = (itemName) => {
     setActiveItem(itemName === activeItem ? null : itemName); // Toggle active item
+  };
+  const handleNavigate = (path) => {
+    setActiveItem(path);
+    navigate(path);
   };
   const linkStyles = {
     textDecoration: "none",
@@ -578,7 +591,149 @@ export default function UserNavbar() {
                 />
               </ListItemButton>
             </ListItem> */}
-            <ListItem disablePadding>
+
+            {/* construction nav items starts */}
+
+            <List>
+              <ListItemButton onClick={handleClick}>
+                <ListItemIcon>
+                  <img
+                    src={Construction}
+                    alt="Construction icon"
+                    className="listItemStyles"
+                  />
+                </ListItemIcon>
+                <ListItemText primary="Construction" />
+                {open_c ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={open_c} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton
+                    sx={{ pl: 4, pt: 0, pb: 0 }}
+                    onClick={() => {
+                      handleNavigate(PATH.CONSTRUCTION_REGISTER);
+                    }}
+                    selected={activeItem === PATH.CONSTRUCTION_REGISTER}
+                  >
+                    <ListItemIcon>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Registration"
+                      style={{
+                        color:
+                          activeItem === PATH.CONSTRUCTION_REGISTER
+                            ? "#f43984"
+                            : "white",
+                      }}
+                    />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4, pt: 0, pb: 0 }}
+                    onClick={() => {
+                      handleNavigate(PATH.CONSTRUCTION_ADD_EXPENSES);
+                    }}
+                    selected={activeItem === PATH.CONSTRUCTION_ADD_EXPENSES}
+                  >
+                    <ListItemIcon>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Add Expenses"
+                      style={{
+                        color:
+                          activeItem === PATH.CONSTRUCTION_ADD_EXPENSES
+                            ? "#f43984"
+                            : "white",
+                      }}
+                    />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4, pt: 0, pb: 0 }}
+                    onClick={() => {
+                      handleNavigate(PATH.CONSTRUCTION_VIEW_EXPENSES);
+                    }}
+                    selected={activeItem === PATH.CONSTRUCTION_VIEW_EXPENSES}
+                  >
+                    <ListItemIcon>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="View Expenses"
+                      style={{
+                        color:
+                          activeItem === PATH.CONSTRUCTION_VIEW_EXPENSES
+                            ? "#f43984"
+                            : "white",
+                      }}
+                    />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4, pt: 0, pb: 0 }}
+                    onClick={() => {
+                      handleNavigate(PATH.CONSTRUCTION_ADD_INCOME);
+                    }}
+                    selected={activeItem === PATH.CONSTRUCTION_ADD_INCOME}
+                  >
+                    <ListItemIcon>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Add Income"
+                      style={{
+                        color:
+                          activeItem === PATH.CONSTRUCTION_ADD_INCOME
+                            ? "#f43984"
+                            : "white",
+                      }}
+                    />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4, pt: 0, pb: 0 }}
+                    onClick={() => {
+                      handleNavigate(PATH.CONSTRUCTION_VIEW_INCOME);
+                    }}
+                    selected={activeItem === PATH.CONSTRUCTION_VIEW_INCOME}
+                  >
+                    <ListItemIcon>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="View Income"
+                      style={{
+                        color:
+                          activeItem === PATH.CONSTRUCTION_VIEW_INCOME
+                            ? "#f43984"
+                            : "white",
+                      }}
+                    />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4, pt: 0, pb: 0 }}
+                    onClick={() => {
+                      handleNavigate(PATH.CONSTRUCTION_PAYMENT_HISTORY);
+                    }}
+                    selected={activeItem === PATH.CONSTRUCTION_PAYMENT_HISTORY}
+                  >
+                    <ListItemIcon>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Payment History"
+                      style={{
+                        color:
+                          activeItem === PATH.CONSTRUCTION_PAYMENT_HISTORY
+                            ? "#f43984"
+                            : "white",
+                      }}
+                    />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            </List>
+            {/* construction nav items ends */}
+
+            {/* <ListItem disablePadding>
               <ListItemButton
                 component={Link}
                 to={PATH.USERADDCONSTRUCTIONS}
@@ -600,7 +755,7 @@ export default function UserNavbar() {
                   }}
                 />
               </ListItemButton>
-            </ListItem>
+            </ListItem> */}
 
             <ListItem disablePadding style={listItemStyle1}>
               <ListItemButton

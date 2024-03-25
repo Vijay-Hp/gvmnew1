@@ -381,25 +381,19 @@ export function Btn(props) {
   };
 
   return (
-    <>
-      <Form.Label
-        column
-        sm={4}
-        style={{ color: "white", marginTop: "5px" }}
-      ></Form.Label>
-      <Col sm={8} className="text-center">
-        <Button
-          type="submit"
-          size="lg"
-          variant="primary"
-          className="w-100"
-          style={buttonStyle}
-          onClick={props.btnEvent}
-        >
-          {props.btn}
-        </Button>
-      </Col>
-    </>
+    <Col sm={8} className="text-center">
+      <Button
+        type="submit"
+        size="lg"
+        variant="primary"
+        className="w-100"
+        style={buttonStyle}
+        onClick={props.btnEvent}
+        {...props}
+      >
+        {props.btn}
+      </Button>
+    </Col>
   );
 }
 
