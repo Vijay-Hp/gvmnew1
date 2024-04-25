@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Col, Row, Table, Modal, Form } from "react-bootstrap";
-import { styled, useTheme } from "@mui/material/styles";
+import { Button, Col, Row, Table, Form } from "react-bootstrap";
 import "./style";
 import Container from "react-bootstrap/Container";
 import AddIcon from "../icons/add-icon.svg";
-import DownloadIcon from "@mui/icons-material/Download";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
@@ -13,55 +11,31 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { saveAs } from "file-saver";
-import { Document, pdf, Page, Text, View } from "@react-pdf/renderer";
 import Card from "react-bootstrap/Card";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import UpdateIcon from "@mui/icons-material/Update";
-import {
-  Btn,
-  Btn1,
-  Btncancel,
-  Date,
-  Date1,
-  Id,
-  Idnotreq,
-  Idpayment,
-  Idreadonly,
-  Mbl,
-  Mblpayment,
-  Name,
-  Nameinvoice,
-  Namenotreq,
-  Namepayment,
-  No,
-  Noinvoice,
-  Nopayment,
-  Nopoint,
-  Noreadonly,
-  Radio,
-  Radio1,
-  Topbutton,
-  Topbutton1,
-} from "./Input";
+import { Btn } from "./Input";
 import { dataContext } from "./context/DataContext.jsx";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { EditCalendarOutlined } from "@mui/icons-material";
-import ClearAllIcon from "@mui/icons-material/ClearAll";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import logo from "../assets/login image.jpg";
+import {
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  Slide,
+  TextField,
+} from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Padding } from "@mui/icons-material";
 
 function Rental_products_view() {
   const breadcrumbs = [
@@ -92,6 +66,7 @@ function Rental_products_view() {
       const response = await axios.get(
         "http://localhost/GVM_Backend/controllers/api/get/viewRental.php"
       );
+      console.log(response);
       setPurchaseData(response.data);
       setFilteredData(response.data);
     } catch (error) {
@@ -231,7 +206,12 @@ function Rental_products_view() {
   const [filteredTableData, setFilteredTableData] = useState([]);
   const [loading, setLoading] = useState(false); // Define the loading state
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = React.useState(false);
 
+  const handleClickOpen = () => {
+    setIsOpen((prev) => !prev);
+    console.log(isOpen);
+  };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     setOpen(true);
@@ -524,7 +504,7 @@ function Rental_products_view() {
               </div>
             </Col>
             {/* second table */}
-            <Col xs={12} md={8} lg={6} className="d-grid gap-2 mt-1">
+            <Col xs={12} md={12} lg={12} className="d-grid gap-2 mt-1">
               <div
                 style={{
                   overflowX: "auto",
@@ -716,7 +696,243 @@ function Rental_products_view() {
           )}
         </Container>
       </div>
+      <CustomDialogue
+        isOpen={isOpen}
+        handleClick={handleClickOpen}
+        maxWidth="sm"
+      />
+      <button onClick={handleClickOpen}>click</button>
     </>
   );
 }
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+const CustomDialogue = ({
+  isOpen,
+  handleClick,
+  data,
+  actionType,
+  maxWidth = "xs",
+}) => {
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={handleClick}
+      TransitionComponent={Transition}
+      keepMounted
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      maxWidth={maxWidth}
+    >
+      <DialogTitle id="alert-dialog-title">Edit Rental</DialogTitle>
+      <Divider />
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          {/* <EditAction />
+          <DeleteAction /> */}
+          <EditRentalHistoryAction />
+        </DialogContentText>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const EditAction = (data) => {
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <TextField
+          required
+          id="siteName"
+          label="Site Name"
+          name="siteName"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DatePicker"]}>
+            <DatePicker label="Date" />
+          </DemoContainer>
+        </LocalizationProvider>
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          required
+          id="totalAmount"
+          label="Total Amount"
+          name="totalAmount"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          required
+          id="paidAmount"
+          label="Paid Amount"
+          name="paidAmount"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          required
+          id="balanceAmount"
+          label="Balance Amount"
+          name="balanceAmount"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button variant="contained" style={{ border: "1px solid" }}>
+          Save
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
+const EditRentalHistoryAction = (data) => {
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <TextField
+          required
+          id="siteName"
+          label="Site Name"
+          name="siteName"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6} style={{ paddingTop: "8px" }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DatePicker"]}>
+            <DatePicker label="Date" />
+          </DemoContainer>
+        </LocalizationProvider>
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="productName"
+          label="Product Name"
+          name="productName"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <TextField
+          required
+          id="days"
+          label="Days"
+          name="days"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <TextField
+          required
+          id="quantity"
+          label="Quantity"
+          name="quantity"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <TextField
+          required
+          id="price"
+          label="Price"
+          name="price"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DatePicker"]}>
+            <DatePicker label="From Date" />
+          </DemoContainer>
+        </LocalizationProvider>
+      </Grid>
+      <Grid item xs={6}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DatePicker"]}>
+            <DatePicker label="To Date" />
+          </DemoContainer>
+        </LocalizationProvider>
+      </Grid>
+      <Grid item xs={4}>
+        <TextField
+          required
+          id="total"
+          label="Total"
+          name="total"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <TextField
+          required
+          id="paid"
+          label="Paid"
+          name="paid"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <TextField
+          required
+          id="balance"
+          label="Balance"
+          name="balance"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button variant="contained" style={{ border: "1px solid" }}>
+          Save
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
+const DeleteAction = (data) => {
+  return (
+    <div>
+      <center>
+        <h4>Do you want delete?</h4>
+      </center>
+      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+        <Button>Delete</Button>
+        <Button autoFocus>Cancel</Button>
+      </div>
+    </div>
+  );
+};
 export default Rental_products_view;

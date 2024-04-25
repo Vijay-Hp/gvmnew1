@@ -45,6 +45,19 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { EditCalendarOutlined } from "@mui/icons-material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
+import {
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  Slide,
+  TextField,
+} from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo/DemoContainer.js";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function View_construction_income() {
   const breadcrumbs = [
@@ -65,7 +78,11 @@ function View_construction_income() {
   const { purchaseData, setPurchaseData: setPurchaseDataContext } =
     useContext(dataContext);
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isOpen, setIsOpen] = React.useState(false);
 
+  const handleClickOpen = () => {
+    setIsOpen((prev) => !prev);
+  };
   useEffect(() => {
     fetchData();
   }, []);
@@ -596,38 +613,15 @@ function View_construction_income() {
               <Table bordered className="table-center">
                 <thead>
                   <tr>
+                    <th>Income Id</th>
+                    <th>Customer Name</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Comment</th>
+                    <th>Amount</th>
+                    <th>Total</th>
                     <th>Action</th>
-                    <th onClick={() => handleSort("purchase_id")}>
-                      purchase_id {getSortArrow("purchase_id")}
-                    </th>
-                    <th>mobile_no</th>
-                    <th onClick={() => handleSort("vendor_name")}>
-                      vendor_name {getSortArrow("vendor_name")}
-                    </th>
-                    <th>vendor_type</th>
-                    <th onClick={() => handleSort("product_name")}>
-                      product_name {getSortArrow("product_name")}
-                    </th>
-                    <th>product_quantity</th>
-                    <th>total_amount</th>
-                    <th>paid_amount</th>
-                    <th>balance_amount</th>
-                    <th>payment_method</th>
-                    <th>payment_type</th>
-                    <th>gst_no</th>
-                    <th>vehicle_no</th>
-                    <th>vechicle_type</th>
-                    <th>driver_name</th>
-                    <th>fuel_liter</th>
-                    <th>fuel_amount</th>
-                    <th>date</th>
-                    <th>wages</th>
-                    <th>wages_amount</th>
-                    <th>other_expenses</th>
-                    <th>expenses_amount</th>
-                    <th>wages_total_amount</th>
-                    <th>rental_amount</th>
-                    <th>balance_amount1</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -657,31 +651,6 @@ function View_construction_income() {
                           <DeleteIcon />
                         </button>
                       </td>
-                      <td>{purchase.purchase_id}</td>
-                      <td>{purchase.mobile_no}</td>
-                      <td>{purchase.vendor_name}</td>
-                      <td>{purchase.vendor_type}</td>
-                      <td>{purchase.product_name}</td>
-                      <td>{purchase.product_quantity}</td>
-                      <td>{purchase.total_amount}</td>
-                      <td>{purchase.paid_amount}</td>
-                      <td>{purchase.balance_amount}</td>
-                      <td>{purchase.payment_method}</td>
-                      <td>{purchase.payment_type}</td>
-                      <td>{purchase.gst_no}</td>
-                      <td>{purchase.vehicle_no}</td>
-                      <td>{purchase.vehicle_type}</td>
-                      <td>{purchase.driver_name}</td>
-                      <td>{purchase.fuel_liter}</td>
-                      <td>{purchase.fuel_amount}</td>
-                      <td>{purchase.date}</td>
-                      <td>{purchase.wages}</td>
-                      <td>{purchase.wages_amount}</td>
-                      <td>{purchase.other_expenses}</td>
-                      <td>{purchase.expenses_amount}</td>
-                      <td>{purchase.wages_total_amount}</td>
-                      <td>{purchase.rental_amount}</td>
-                      <td>{purchase.balance_amount1}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1039,8 +1008,154 @@ function View_construction_income() {
           </Modal.Footer>
         </Modal.Dialog>
       </Modal>
+      <CustomDialogue
+        isOpen={isOpen}
+        handleClick={handleClickOpen}
+        maxWidth="sm"
+      />
+      <button onClick={handleClickOpen}>click</button>
     </>
   );
 }
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+const CustomDialogue = ({
+  isOpen,
+  handleClick,
+  data,
+  actionType,
+  maxWidth = "xs",
+}) => {
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={handleClick}
+      TransitionComponent={Transition}
+      keepMounted
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      maxWidth={maxWidth}
+    >
+      <DialogTitle id="alert-dialog-title">Edit Constructions</DialogTitle>
+      <Divider />
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          <EditRentalHistoryAction />
+        </DialogContentText>
+      </DialogContent>
+    </Dialog>
+  );
+};
+const DeleteAction = (data) => {
+  return (
+    <div>
+      <center>
+        <h4>Do you want delete?</h4>
+      </center>
+      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+        <Button>Delete</Button>
+        <Button autoFocus>Cancel</Button>
+      </div>
+    </div>
+  );
+};
+const EditRentalHistoryAction = (data) => {
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="incomeId"
+          label="Income Id"
+          name="incomeId"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="customerName"
+          label="Customer Name"
+          name="customerName"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="location"
+          label="Location"
+          name="location"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6} style={{ paddingTop: "8px" }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DatePicker"]}>
+            <DatePicker label="Date" fullWidth />
+          </DemoContainer>
+        </LocalizationProvider>
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="description"
+          label="Description"
+          name="description"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="comment"
+          label="Comment"
+          name="comment"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="amount"
+          label="Amount"
+          name="amount"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          required
+          id="total"
+          label="Total"
+          name="total"
+          variant="outlined"
+          fullWidth
+        />
+      </Grid>
+
+      <Grid
+        item
+        xs={12}
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button variant="contained" style={{ border: "1px solid" }}>
+          Save
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default View_construction_income;
