@@ -39,7 +39,7 @@ function Add_construction_income() {
       Constructions
     </Link>,
     <Link underline="hover" key="2" color="white">
-      Add Expenses
+      Add Income
     </Link>,
   ];
   // navigate submit button
@@ -84,38 +84,39 @@ function Add_construction_income() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-    } else {
-      const total = subtotal(rows);
-      const building = purchaseData.building;
-      const newData = {
-        building: building,
-        customer_name: record.customer_name,
-        location: record.location,
-        date: record.date,
-        date1: record.date,
-        service: rows,
-        subtotal: subtotal,
-        total: total,
-      };
+    const total = subtotal(rows);
+    const building = purchaseData.wages_type;
+    const newData = {
+      building: building,
+      cus_name: record.customer_name,
+      location: record.location,
+      date: record.date,
+      total: total,
+      array_data: rows?.map((row) => ({
+        desc: row.desc,
+        comment: row.comment,
+        amount: row.price,
+        qty: row.price,
+      })),
+    };
 
-      console.log(newData);
+    console.log(newData);
 
-      axios
-        .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addConstructionDetails.php",
-          newData
-        )
-        .then((response) => {
-          // console.log("Data sent successfully:", response.data);
-          toast.success("Data Insert Successfully!");
-        })
-        .catch((error) => {
-          console.error("Error sending data:", error);
-        });
-    }
+    axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/post/addIncome.php",
+        newData
+      )
+      .then((response) => {
+        // console.log("Data sent successfully:", response.data);
+        setRows([]);
+        setRecord({});
+        setValue({});
+        toast.success("Data Insert Successfully!");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
 
     setValidated(true);
   };
@@ -157,7 +158,7 @@ function Add_construction_income() {
   }
 
   function subtotal(items) {
-    return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
+    return items?.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
   }
 
   const handleAddRow = () => {
@@ -220,7 +221,7 @@ function Add_construction_income() {
           >
             <Button onClick={handleAddRow}>Add Row</Button>
           </Col>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form noValidate>
             <Form.Group
               as={Row}
               className="mb-3"
@@ -260,6 +261,7 @@ function Add_construction_income() {
                       name="Customer_Name"
                       handleDataChange={handleDataChange}
                       textboxName="customer_name"
+                      value={record.customer_name}
                     />
                   </Col>
                 </Col>
@@ -274,6 +276,7 @@ function Add_construction_income() {
                       name="Location"
                       handleDataChange={handleDataChange}
                       textboxName="location"
+                      value={record.location}
                     />
                   </Col>
                 </Col>
@@ -283,6 +286,7 @@ function Add_construction_income() {
                       name="Date"
                       handleDataChange={handleDataChange}
                       textboxName="date"
+                      value={record.date}
                     />
                   </Col>
                 </Col>
@@ -307,7 +311,7 @@ function Add_construction_income() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {rows.map((row, index) => (
+                        {rows?.map((row, index) => (
                           <TableRow key={index}>
                             <TableCell>
                               <Nameinvoice
@@ -383,7 +387,7 @@ function Add_construction_income() {
                   lg={{ span: 3, offset: 9 }}
                   className="d-grid gap-2"
                 >
-                  <Btn btn="Submit" />
+                  <Btn btn="Submit" btnEvent={handleSubmit} />
                 </Col>
               </Row>
             </Form.Group>

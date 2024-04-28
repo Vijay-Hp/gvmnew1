@@ -84,38 +84,40 @@ function Add_construction_empsal() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-    } else {
-      const total = subtotal(rows);
-      const building = purchaseData.building;
-      const expenses = purchaseData.expenses;
-      const newData = {
-        building: building,
-        expenses: expenses,
-        location: record.location,
-        date1: record.date,
-        service: rows,
-        subtotal: subtotal,
-        total: total,
-      };
+    const total = subtotal(rows);
+    const building = purchaseData.building;
+    const expenses = purchaseData.expenses;
+    const newData = {
+      building: building,
+      expenses: expenses,
+      location: record.location,
+      date: record.date,
+      array_data: rows?.map((row) => ({
+        desc: row.desc,
+        comment: row.comment,
+        amount: row.price,
+        qty: row.price,
+      })),
+      total: total,
+    };
+    axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/post/addExpenses.php",
+        newData
+      )
+      .then((response) => {
+        // console.log("Data sent successfully:", response.data);
+        setRows([]);
+        setPurchaseData({});
+        setRecord({});
+        setValue({});
+        setValue1({});
+        toast.success("Data Insert Successfully!");
+      })
+      .catch((error) => {
+        console.error("Error sending data:", error);
+      });
 
-      console.log(newData);
-
-      axios
-        .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addConstructionDetails.php",
-          newData
-        )
-        .then((response) => {
-          // console.log("Data sent successfully:", response.data);
-          toast.success("Data Insert Successfully!");
-        })
-        .catch((error) => {
-          console.error("Error sending data:", error);
-        });
-    }
     setValidated(true);
   };
 
@@ -236,7 +238,7 @@ function Add_construction_empsal() {
           >
             <Button onClick={handleAddRow}>Add Row</Button>
           </Col>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form noValidate>
             <Form.Group
               as={Row}
               className="mb-3"
@@ -296,6 +298,7 @@ function Add_construction_empsal() {
                       name="Location"
                       handleDataChange={handleDataChange}
                       textboxName="location"
+                      value={record.location}
                     />
                   </Col>
                 </Col>
@@ -310,6 +313,7 @@ function Add_construction_empsal() {
                       name="Date"
                       handleDataChange={handleDataChange}
                       textboxName="date"
+                      value={record.date}
                     />
                   </Col>
                 </Col>
@@ -409,7 +413,7 @@ function Add_construction_empsal() {
                     lg={{ span: 3, offset: 9 }}
                     className="d-grid gap-2"
                   >
-                    <Btn btn="Submit" />
+                    <Btn btn="Submit" btnEvent={handleSubmit} />
                   </Col>
                 </Row>
               </Row>

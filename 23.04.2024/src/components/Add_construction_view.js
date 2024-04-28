@@ -1,26 +1,43 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Button, Col, Row, Table, Modal, Form } from "react-bootstrap";
-import "./style";
-import Container from "react-bootstrap/Container";
-import AddIcon from "../icons/add-icon.svg";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { NavLink } from "react-router-dom";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
-import IconButton from "@mui/material/IconButton";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { saveAs } from "file-saver";
-import Card from "react-bootstrap/Card";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import SearchIcon from "@mui/icons-material/Search";
 import UpdateIcon from "@mui/icons-material/Update";
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  Slide,
+  TextField,
+} from "@mui/material";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import Link from "@mui/material/Link";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Stack from "@mui/material/Stack";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo/DemoContainer.js";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Col, Form, Modal, Row, Table } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
+import { NavLink } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AddIcon from "../icons/add-icon.svg";
+import { DELETE, EDIT } from "../utils/constant.js";
 import {
   Btn1,
   Btncancel,
@@ -36,21 +53,8 @@ import {
   Radio,
 } from "./Input";
 import { dataContext } from "./context/DataContext.jsx";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import {
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Divider,
-  Grid,
-  Slide,
-  TextField,
-} from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo/DemoContainer.js";
+import "./style";
+import dayjs from "dayjs";
 
 function Add_construction_view() {
   const breadcrumbs = [
@@ -72,26 +76,11 @@ function Add_construction_view() {
     useContext(dataContext);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
-
+  const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [childTableData, setChildTableData] = useState([]);
   const handleClickOpen = () => {
     setIsOpen((prev) => !prev);
-    console.log(isOpen);
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchase.php"
-      );
-      setPurchaseDataContext(response.data);
-      setPurchaseData1(response.data);
-      setFilteredData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
   };
 
   const handleSearchChange = (e) => {
@@ -140,7 +129,6 @@ function Add_construction_view() {
           toast.success("Deleted Successfully!");
           setShowPurchaseForm(true);
           setShowQuitForm(true);
-          fetchData();
         }
       })
       .catch((err) => {
@@ -240,9 +228,6 @@ function Add_construction_view() {
   const [selectedPurchase, setSelectedPurchase] = useState(null);
   const [validated, setValidated] = useState(false);
   const [record, setRecord] = useState(null);
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const info = purchaseData?.length ? purchaseData[0] : "";
@@ -377,7 +362,6 @@ function Add_construction_view() {
             // Reset other fields as needed
           });
           // Refetch data to update the UI
-          fetchData();
         })
         .catch((error) => {
           console.error("Error sending data:", error);
@@ -392,10 +376,11 @@ function Add_construction_view() {
   const [open, setOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [tableData, setTableData] = useState([]); // Assuming you have table data
   const [filteredTableData, setFilteredTableData] = useState([]);
   const [loading, setLoading] = useState(false); // Define the loading state
   const [error, setError] = useState(null);
+  const [data, setData] = useState();
+  const [actionType, setActionType] = useState("");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -469,6 +454,43 @@ function Add_construction_view() {
     { label: "Salary", value: "Salary" },
     { label: "Others", value: "Others" },
   ];
+
+  const handleActionClick = (e, purchase, actionType) => {
+    e.stopPropagation();
+    setData(purchase);
+    setActionType(actionType);
+    handleClickOpen();
+  };
+  const handleTableRowClick = async (data) => {
+    await axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewParticularExpense.php",
+        {
+          id: data?.id,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setChildTableData(response.data);
+        if (response?.data?.length <= 0) {
+          toast.error("No records Found");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+  const getData = async () => {
+    setIsLoading(true);
+    await axios
+      .get("https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php")
+      .then((response) => {
+        setTableData(response.data);
+      })
+      .catch((error) => console.error("Error:", error));
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <div
@@ -645,87 +667,114 @@ function Add_construction_view() {
               </Col>
             </Col>
           </Row>
+          <Row></Row>
         </Container>
       </div>
 
       <Row>
         <Col xs={12} md={8} lg={12} className="d-grid gap-2 mt-5">
-          {loading && <p>Loading...</p>}
-          {error && <p>{error}</p>}
-          {!loading && !error && (
-            <div style={{ overflowX: "auto", maxWidth: "100%" }}>
+          <div
+            style={{
+              overflowX: "auto",
+              maxWidth: "100%",
+              maxHeight: "400px",
+              overflowY: "scroll",
+            }}
+          >
+            <Table bordered className="table-center">
+              <thead>
+                <tr>
+                  <th>Site Name</th>
+                  <th>Date</th>
+                  <th>Total Amount</th>
+                  <th>Paid Amount</th>
+                  <th>Balance Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData?.map((data) => (
+                  <tr
+                    key={data.purchase_id}
+                    onClick={() => handleTableRowClick(data)}
+                  >
+                    <td>{!!data.site_name ? data.site_name : "-"}</td>
+                    <td>{!!data.date ? data.date : "-"}</td>
+                    <td>{!!data.total ? data.total : "0"}</td>
+                    <td>{!!data.paid ? data.paid : "0"}</td>
+                    <td>{!!data.balance ? data.balance : "0"}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      {/* <button
+                        style={{
+                          border: "none",
+                          backgroundColor: "inherit",
+                          display: "inline-block",
+                        }}
+                        onClick={(e) => handleActionClick(e, data, EDIT)}
+                      >
+                        <EditIcon />
+                      </button> */}
+                      <button
+                        style={{
+                          border: "none",
+                          backgroundColor: "inherit",
+                        }}
+                        onClick={(e) => {
+                          handleActionClick(e, data, DELETE);
+                        }}
+                      >
+                        <DeleteIcon />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            {tableData.length <= 0 && (
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                {isLoading ? (
+                  <CircularProgress />
+                ) : (
+                  <h4 style={{ color: "#fff" }}>No records found</h4>
+                )}
+              </div>
+            )}
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12} md={8} lg={12} className="d-grid gap-2 mt-5">
+          <div style={{ overflowX: "auto", maxWidth: "100%" }}>
+            {childTableData?.length > 0 && (
               <Table bordered className="table-center">
                 <thead>
                   <tr>
-                    <th>Expenses Id</th>
-                    <th>Location</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Comment</th>
+                    <th>S no</th>
                     <th>Amount</th>
+                    <th>Comment</th>
+                    <th>Description</th>
                     <th>Quantity</th>
                     <th>Total</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(sortedData() || []).map((purchase) => (
-                    <tr key={purchase.purchase_id}>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <button
-                          style={{
-                            border: "none",
-                            backgroundColor: "inherit",
-                            display: "inline-block",
-                          }}
-                          onClick={() => handleUpdateClick(purchase)}
-                        >
-                          <UpdateIcon />
-                        </button>
-                        <button
-                          style={{
-                            border: "none",
-                            backgroundColor: "inherit",
-                          }}
-                          onClick={() => {
-                            handlePurchaseButtonClick("purchase");
-                            setSelectedVal(purchase);
-                          }}
-                        >
-                          <DeleteIcon />
-                        </button>
-                      </td>
-                      <td>{purchase.purchase_id}</td>
-                      <td>{purchase.mobile_no}</td>
-                      <td>{purchase.vendor_name}</td>
-                      <td>{purchase.vendor_type}</td>
-                      <td>{purchase.product_name}</td>
-                      <td>{purchase.product_quantity}</td>
-                      <td>{purchase.total_amount}</td>
-                      <td>{purchase.paid_amount}</td>
-                      <td>{purchase.balance_amount}</td>
-                      <td>{purchase.payment_method}</td>
-                      <td>{purchase.payment_type}</td>
-                      <td>{purchase.gst_no}</td>
-                      <td>{purchase.vehicle_no}</td>
-                      <td>{purchase.vehicle_type}</td>
-                      <td>{purchase.driver_name}</td>
-                      <td>{purchase.fuel_liter}</td>
-                      <td>{purchase.fuel_amount}</td>
-                      <td>{purchase.date}</td>
-                      <td>{purchase.wages}</td>
-                      <td>{purchase.wages_amount}</td>
-                      <td>{purchase.other_expenses}</td>
-                      <td>{purchase.expenses_amount}</td>
-                      <td>{purchase.wages_total_amount}</td>
-                      <td>{purchase.rental_amount}</td>
-                      <td>{purchase.balance_amount1}</td>
+                  {childTableData?.map((data) => (
+                    <tr
+                      key={data.purchase_id}
+                      onClick={() => handleTableRowClick(data)}
+                    >
+                      <td>{!!data.sno ? data.sno : "-"}</td>
+                      <td>{!!data.amount ? data.amount : "-"}</td>
+                      <td>{!!data.comment ? data.comment : "-"}</td>
+                      <td>{!!data.desc ? data.desc : "-"}</td>
+                      <td>{!!data.qty ? data.qty : "0"}</td>
+                      <td>{!!data.total ? data.total : "0"}</td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
-            </div>
-          )}
+            )}
+          </div>
         </Col>
       </Row>
       {showPurchaseForm ? (
@@ -1081,8 +1130,10 @@ function Add_construction_view() {
         isOpen={isOpen}
         handleClick={handleClickOpen}
         maxWidth="sm"
+        actionType={actionType}
+        data={data}
+        getData={getData}
       />
-      <button onClick={handleClickOpen}>click</button>
     </>
   );
 }
@@ -1096,6 +1147,7 @@ const CustomDialogue = ({
   data,
   actionType,
   maxWidth = "xs",
+  getData,
 }) => {
   return (
     <Dialog
@@ -1107,24 +1159,170 @@ const CustomDialogue = ({
       aria-describedby="alert-dialog-description"
       maxWidth={maxWidth}
     >
-      <DialogTitle id="alert-dialog-title">Edit Constructions</DialogTitle>
+      <DialogTitle id="alert-dialog-title">
+        {actionType} Constructions
+      </DialogTitle>
       <Divider />
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          <EditRentalHistoryAction />
+          {actionType === EDIT && (
+            <EditAction
+              data={data}
+              handleClose={handleClick}
+              getData={getData}
+            />
+          )}
+          {actionType === DELETE && (
+            <DeleteAction
+              data={data}
+              handleClose={handleClick}
+              getData={getData}
+            />
+          )}
+          {/* <EditRentalHistoryAction /> */}
         </DialogContentText>
       </DialogContent>
     </Dialog>
   );
 };
-const DeleteAction = (data) => {
+
+const EditAction = ({ data, handleClose, getData }) => {
+  const [value, setValue] = useState({});
+  const handleChange = (event) => {
+    let newValue = { ...value };
+    if (event.target.name === "paid") {
+      newValue[event.target.name] = event.target.value;
+      newValue.balance = Number(newValue.total) - Number(event.target.value);
+    }
+    setValue({
+      ...newValue,
+    });
+    console.log(newValue);
+  };
+  const handleSave = async () => {
+    if (value.balance >= 0) {
+      toast.success("Data updated successfully");
+      await axios
+        .post(
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateRentalPayment.php",
+          { id: value.id, paid_amount: value.paidAmount }
+        )
+        .then((response) => {
+          getData();
+        })
+        .catch((error) => console.error("Error:", error));
+      handleClose();
+    } else {
+      toast.error("Paid Amount must be equal or Lest than the Total amount");
+    }
+  };
+  useEffect(() => {
+    setValue(data);
+  }, [data]);
   return (
-    <div>
-      <center>
-        <h4>Do you want delete?</h4>
-      </center>
-      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-        <Button>Delete</Button>
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            id="site_name"
+            label="Site Name"
+            name="site_name"
+            variant="outlined"
+            fullWidth
+            value={value?.site_name}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                label="Date"
+                name="date"
+                value={dayjs(value?.date)}
+                disabled
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="total"
+            label="Total Amount"
+            name="total"
+            variant="outlined"
+            fullWidth
+            value={value?.total}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="paid"
+            label="Paid Amount"
+            name="paid"
+            variant="outlined"
+            fullWidth
+            autoFocus
+            onChange={handleChange}
+            value={value?.paid}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="balanceAmount"
+            label="Balance Amount"
+            name="balanceAmount"
+            variant="outlined"
+            fullWidth
+            value={value?.balance}
+            disabled
+          />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            variant="contained"
+            style={{ border: "1px solid" }}
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </Grid>
+      </Grid>
+    </>
+  );
+};
+const DeleteAction = ({ data, handleClose, getData }) => {
+  const handleDelete = async () => {
+    await axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/delete/deleteAllExpense.php",
+        { id: data.id }
+      )
+      .then(() => {
+        toast.success("Data deleted successfully");
+        getData();
+        handleClose();
+      })
+      .catch((error) =>
+        toast.error("Unable to delete this data " + error.message)
+      );
+  };
+  return (
+    <div
+      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+    >
+      <h4>Do you want delete?</h4>
+
+      <div style={{ display: "flex", gap: "24px" }}>
+        <Button onClick={handleDelete}>Delete</Button>
         <Button autoFocus>Cancel</Button>
       </div>
     </div>

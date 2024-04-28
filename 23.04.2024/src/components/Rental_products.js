@@ -28,6 +28,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import logo from "../assets/login image.jpg";
+import { ToastContainer, toast } from "react-toastify";
 
 function Rental_products() {
   const breadcrumbs = [
@@ -49,61 +50,67 @@ function Rental_products() {
   const [rows, setRows] = useState([createRow("", 0, 0)]);
   const [taxRate, setTaxRate] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [value, setValue] = useState({});
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
-      );
-      setPurchaseData(response.data);
-      setFilteredData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
+  //     );
+  //     setPurchaseData(response.data);
+  //     setFilteredData(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
+  // console.log("purchaseData", purchaseData);
+  const handleChange = (event) => {
+    let newValue = { ...value };
+    newValue[event.target.name] = event.target.value;
+    setValue({
+      ...newValue,
+    });
+    console.log(newValue);
   };
-  console.log("purchaseData", purchaseData);
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-    } else {
-      const newData = {
-        site_name: record.site_name,
-        date1: record.date,
-        rent: rows.map((row) => ({
-          ...row,
-          date: row.date,
-          todate: row.todate,
-        })),
-        subtotal: subtotal,
-        gstAmount: gstAmount,
-        total: total,
-        paid: "0",
-        balance: total,
-      };
-      console.log(newData);
-      newData.rent.map((row) => console.log(row));
-      axios
-        .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addRentalDetails.php",
-          newData
-        )
-        .then((response) => {
-          console.log("Data sent successfully:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error sending data:", error);
-        });
-    }
+    console.log("handle");
 
-    setValidated(true);
+    const newData = {
+      site_name: value.site_name,
+      date: value.date,
+      total: total,
+      array_data: rows?.map((row) => ({
+        site_name: value.site_name,
+        date: row.fromDate,
+        product_name: row.product_name,
+        days: row.days,
+        qty: row.qty,
+        price: row.price,
+        todate: row.todate,
+      })),
+    };
+    axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/post/addRentalDetails.php",
+        newData
+      )
+      .then((response) => {
+        toast.success("Data inserted successfully");
+        setRows([]);
+        setValue([]);
+      })
+      .catch((error) => {
+        toast.error("Something went wrong");
+      });
+    // }
+
+    // setValidated(true);
   };
 
   const handleDataChange = (e, index, field) => {
@@ -156,16 +163,28 @@ function Rental_products() {
     setTaxRate(parseFloat(value));
   };
 
-  function createRow(rent_data, qty, unit, date, todate) {
+  function createRow(
+    product_name,
+    qty,
+    unit,
+    date,
+    todate,
+    days,
+    fromDate,
+    total
+  ) {
     return {
-      rent_data,
+      product_name,
       qty,
       unit,
       service: 0,
       labor: 0,
       price: 0,
       date,
+      days,
+      fromDate,
       todate,
+      total,
     };
   }
 
@@ -209,211 +228,218 @@ function Rental_products() {
             <Button onClick={handleAddRow}>Add Row</Button>
           </Col>
           <Row>
-            <Form noValidate validated={validated} onSubmit={handleSubmit}>
-              <Form.Group as={Row} controlId="validationCustom01">
-                <Col
-                  xs={12}
-                  md={8}
-                  lg={{ span: 3, offset: 1 }}
-                  className="d-grid gap-2 mt-3"
+            {/* <Form noValidate validated={validated}>
+              <Form.Group as={Row} controlId="validationCustom01"> */}
+            <Col
+              xs={12}
+              md={8}
+              lg={{ span: 3, offset: 1 }}
+              className="d-grid gap-2 mt-3"
+            >
+              <Name
+                name="Site Name"
+                handleDataChange={handleChange}
+                value={value?.site_name}
+                textboxName="site_name"
+              />
+            </Col>
+            <Col
+              xs={12}
+              md={8}
+              lg={{ span: 3, offset: 1 }}
+              className="d-grid gap-2 mt-3"
+            >
+              <Date
+                name="Date"
+                handleDataChange={handleChange}
+                value={value?.date}
+                textboxName="date"
+              />
+            </Col>
+            <Col xs={12} className="d-grid gap-2 mt-2">
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 700 }} aria-label="spanning table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Product Name</TableCell>
+                      <TableCell>Days/Trip</TableCell>
+                      <TableCell>Qty</TableCell>
+                      <TableCell>Price</TableCell>
+                      <TableCell>From Date</TableCell>
+                      <TableCell>To Date</TableCell>
+                      <TableCell>Total Amount</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <Nameinvoice
+                            name="Product"
+                            handleDataChange={(e) => handleDataChange(e, index)}
+                            textboxName="product_name"
+                            index={index}
+                            value={row.rent_data}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Noinvoice
+                            name="days"
+                            handleDataChange={(e) => handleDataChange(e, index)}
+                            textboxName="days"
+                            index={index}
+                            value={row.days}
+                          />
+                        </TableCell>
+
+                        <TableCell>
+                          <Noinvoice
+                            name="qty"
+                            handleDataChange={(e) => handleDataChange(e, index)}
+                            textboxName="qty"
+                            index={index}
+                            value={row.qty}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Noinvoice
+                            name="price"
+                            handleDataChange={(e) => handleDataChange(e, index)}
+                            textboxName="price"
+                            index={index}
+                            value={row.price}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Date1
+                            name="From Date"
+                            handleDataChange={(e) => handleDataChange(e, index)}
+                            textboxName="fromDate"
+                            index={index}
+                            value={row.fromDate}
+                          />
+                        </TableCell>
+
+                        <TableCell>
+                          <Date1
+                            name="To Date"
+                            handleDataChange={(e) => handleDataChange(e, index)}
+                            textboxName="todate"
+                            index={index}
+                            value={row.todate}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Noreadonly
+                            name="Total Amt"
+                            textboxName="price"
+                            index={index}
+                            value={row.price}
+                          />
+                        </TableCell>
+
+                        <TableCell align="right">
+                          <Button onClick={() => handleRemoveRow(index)}>
+                            Remove
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+
+                    <TableRow>
+                      <TableCell colSpan={6}>Subtotal</TableCell>
+
+                      <TableCell>
+                        <Noreadonly
+                          name="Subtotal"
+                          handleDataChange={handleDataChange}
+                          textboxName="subtotal"
+                          index={-1}
+                          value={subtotal}
+                        />
+                      </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell colSpan={5}> GST(%):</TableCell>
+                      <TableCell>
+                        <input
+                          type="number"
+                          value={taxRate}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            if (value.length > 5) {
+                              value = value.slice(0, 5);
+                            }
+                            handleTaxRateChange({
+                              ...e,
+                              target: { ...e.target, value },
+                            });
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Noreadonly
+                          name="GST"
+                          handleDataChange={handleDataChange}
+                          textboxName="taxRate"
+                          index={-2}
+                          value={subtotal * (taxRate / 100)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={6}>Total</TableCell>
+                      <TableCell>
+                        <Noreadonly
+                          name="Total"
+                          handleDataChange={handleDataChange}
+                          textboxName="total"
+                          index={-3}
+                          value={subtotal + subtotal * (taxRate / 100)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Col>
+            <Row>
+              <Col
+                xs={12}
+                md={8}
+                lg={{ span: 3, offset: 9 }}
+                className="d-grid gap-2"
+              >
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  style={{
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                    marginTop: "10px",
+                  }}
                 >
-                  <Name
-                    name="Site Name"
-                    handleDataChange={handleDataChange}
-                    textboxName="site_name"
-                  />
-                </Col>
-                <Col
-                  xs={12}
-                  md={8}
-                  lg={{ span: 3, offset: 1 }}
-                  className="d-grid gap-2 mt-3"
-                >
-                  <Date
-                    name="Date"
-                    handleDataChange={handleDataChange}
-                    textboxName="hdate"
-                  />
-                </Col>
-                <Col
-                  xs={12}
-                  md={8}
-                  lg={{ span: 10, offset: 1 }}
-                  className="d-grid gap-2 mt-2"
-                >
-                  <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 700 }} aria-label="spanning table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Product Name</TableCell>
-                          <TableCell>Days/Trip</TableCell>
-                          <TableCell>Qty</TableCell>
-                          <TableCell>Price</TableCell>
-                          <TableCell>From Date</TableCell>
-                          <TableCell>To Date</TableCell>
-                          <TableCell>Total Amount</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rows.map((row, index) => (
-                          <TableRow key={index}>
-                            <TableCell>
-                              <Nameinvoice
-                                name="Product"
-                                handleDataChange={(e) =>
-                                  handleDataChange(e, index)
-                                }
-                                textboxName="rent_data"
-                                index={index}
-                                value={row.rent_data}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Noinvoice
-                                name="Days"
-                                handleDataChange={(e) =>
-                                  handleDataChange(e, index)
-                                }
-                                textboxName="qty"
-                                index={index}
-                                value={row.qty}
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <Noinvoice
-                                name="Qty"
-                                handleDataChange={(e) =>
-                                  handleDataChange(e, index)
-                                }
-                                textboxName="service"
-                                index={index}
-                                value={row.service}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Noinvoice
-                                name="Price"
-                                handleDataChange={(e) =>
-                                  handleDataChange(e, index)
-                                }
-                                textboxName="labor"
-                                index={index}
-                                value={row.labor}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Date1
-                                name="From Date"
-                                handleDataChange={(e) =>
-                                  handleDataChange(e, index)
-                                }
-                                textboxName="date"
-                                index={index}
-                                value={row.date}
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <Date1
-                                name="To Date"
-                                handleDataChange={(e) =>
-                                  handleDataChange(e, index)
-                                }
-                                textboxName="todate"
-                                index={index}
-                                value={row.todate}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Noreadonly
-                                name="Total Amt"
-                                textboxName="price"
-                                index={index}
-                                value={row.price}
-                              />
-                            </TableCell>
-
-                            <TableCell align="right">
-                              <Button onClick={() => handleRemoveRow(index)}>
-                                Remove
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-
-                        <TableRow>
-                          <TableCell colSpan={6}>Subtotal</TableCell>
-
-                          <TableCell>
-                            <Noreadonly
-                              name="Subtotal"
-                              handleDataChange={handleDataChange}
-                              textboxName="subtotal"
-                              index={-1}
-                              value={subtotal}
-                            />
-                          </TableCell>
-                        </TableRow>
-
-                        <TableRow>
-                          <TableCell colSpan={5}> GST(%):</TableCell>
-                          <TableCell>
-                            <input
-                              type="number"
-                              value={taxRate}
-                              onChange={(e) => {
-                                let value = e.target.value;
-                                if (value.length > 5) {
-                                  value = value.slice(0, 5);
-                                }
-                                handleTaxRateChange({
-                                  ...e,
-                                  target: { ...e.target, value },
-                                });
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Noreadonly
-                              name="GST"
-                              handleDataChange={handleDataChange}
-                              textboxName="taxRate"
-                              index={-2}
-                              value={subtotal * (taxRate / 100)}
-                            />
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell colSpan={6}>Total</TableCell>
-                          <TableCell>
-                            <Noreadonly
-                              name="Total"
-                              handleDataChange={handleDataChange}
-                              textboxName="total"
-                              index={-3}
-                              value={subtotal + subtotal * (taxRate / 100)}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Col>
-                <Row>
-                  <Col
-                    xs={12}
-                    md={8}
-                    lg={{ span: 3, offset: 9 }}
-                    className="d-grid gap-2"
-                  >
-                    <Btn btn="Submit" />
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Form>
+                  Submit
+                </Button>
+              </Col>
+            </Row>
+            {/* </Form.Group>
+            </Form> */}
           </Row>
         </Container>
+        <ToastContainer
+          position="top-right"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </div>
     </>
   );

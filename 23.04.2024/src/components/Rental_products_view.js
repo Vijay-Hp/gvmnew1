@@ -17,12 +17,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import Card from "react-bootstrap/Card";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import UpdateIcon from "@mui/icons-material/Update";
 import { Btn } from "./Input";
 import { dataContext } from "./context/DataContext.jsx";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import EditIcon from "@mui/icons-material/Edit";
 import {
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogContentText,
@@ -30,12 +31,15 @@ import {
   Divider,
   Grid,
   Slide,
+  Snackbar,
   TextField,
 } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Padding } from "@mui/icons-material";
+import { DELETE, EDIT, EDIT_RENTAL_HISTORY } from "../utils/constant.js";
+import dayjs from "dayjs";
 
 function Rental_products_view() {
   const breadcrumbs = [
@@ -66,7 +70,6 @@ function Rental_products_view() {
       const response = await axios.get(
         "http://localhost/GVM_Backend/controllers/api/get/viewRental.php"
       );
-      console.log(response);
       setPurchaseData(response.data);
       setFilteredData(response.data);
     } catch (error) {
@@ -87,21 +90,22 @@ function Rental_products_view() {
   };
 
   // Handle table row click
-  const handleTableRowClick = (purchase) => {
-    setRecord({
-      site_name: purchase.site_name,
-      date1: purchase.date1,
-      desc: purchase.desc,
-      labor: purchase.labor,
-      price: purchase.price,
-      qty: purchase.qty,
-      service: purchase.service,
-      date: purchase.date,
-      todate: purchase.todate,
-      total: purchase.total,
-      paid: purchase.paid,
-      balance: purchase.balance,
-    });
+  const handleTableRowClick = async (purchase) => {
+    await axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewParticulerRental.php",
+        {
+          id: purchase?.id,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setSelectedSite(response.data);
+        if (response?.data?.length <= 0) {
+          toast.error("No records Found");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   };
   // Handle form submission
   const handleSubmit = (event) => {
@@ -137,7 +141,6 @@ function Rental_products_view() {
           newData
         )
         .then((response) => {
-          console.log("Data sent successfully:", response.data);
           toast.success("Data Insert Successfully!");
         })
         .catch((error) => {
@@ -159,7 +162,6 @@ function Rental_products_view() {
           updateData
         )
         .then((response) => {
-          console.log("Data updated successfully:", response.data);
           toast.success("Data Updated Successfully!");
         })
         .catch((error) => {
@@ -190,7 +192,6 @@ function Rental_products_view() {
       if (balance_amount < 0) {
         balance_amount = 0; // Set balance_amount to 0 if negative
       }
-      console.log("balance:", balance_amount);
       return balance_amount.toString();
     } else {
       return "0";
@@ -210,7 +211,6 @@ function Rental_products_view() {
 
   const handleClickOpen = () => {
     setIsOpen((prev) => !prev);
-    console.log(isOpen);
   };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -223,9 +223,6 @@ function Rental_products_view() {
   };
 
   const dateSubmit = () => {
-    console.log("Start Date:", startDate);
-    console.log("End Date:", endDate);
-
     // Create a data object with the start date and end date
     const data = {
       start_date: startDate,
@@ -253,24 +250,14 @@ function Rental_products_view() {
   const [record, setRecord] = useState(null);
   const [validated, setValidated] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
-  const [updateData, setUpdateData] = useState({
-    site_name: "",
-    date1: "",
-    total_amount: "",
-    paid_amount: "",
-    payment_method: "",
-  });
-
-  const handleUpdateClick = (purchase) => {
-    setSelectedPurchase(purchase);
-    setUpdateData({
-      site_name: purchase.site_name,
-      date1: purchase.date1,
-      wages_type: purchase.wages_type,
-      salary_amount: purchase.salary_amount,
-      paid_amount: purchase.paid_amount,
-      payment_method: purchase.payment_method,
-    });
+  const [selectedSite, setSelectedSite] = useState([]);
+  const [data, setData] = useState();
+  const [actionType, setActionType] = useState("");
+  const handleActionClick = (e, purchase, actionType) => {
+    e.stopPropagation();
+    setData(purchase);
+    setActionType(actionType);
+    handleClickOpen();
   };
 
   //delete
@@ -319,7 +306,17 @@ function Rental_products_view() {
     setShowPurchaseForm(true);
     setShowQuitForm(false);
   };
-
+  const getData = async () => {
+    await axios
+      .get("https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php")
+      .then((response) => {
+        setFilteredData(response.data);
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <div
@@ -442,7 +439,7 @@ function Rental_products_view() {
 
           {/* Table */}
           <Row>
-            <Col xs={12} md={8} lg={12} className="d-grid gap-2 mt-1">
+            <Col xs={12} className="d-grid gap-2 mt-1">
               <div
                 style={{
                   overflowX: "auto",
@@ -454,20 +451,30 @@ function Rental_products_view() {
                 <Table bordered className="table-center">
                   <thead>
                     <tr>
+                      <th>Site Name</th>
+                      <th>Date</th>
+                      <th>Total Amount</th>
+                      <th>Paid Amount</th>
+                      <th>Balance Amount</th>
                       <th>Action</th>
-                      <th>site_name</th>
-                      <th>date</th>
-                      <th>total amount</th>
-                      <th>paid amount</th>
-                      <th>balance amount</th>
                     </tr>
                   </thead>
+
                   <tbody>
-                    {filteredData.map((purchase) => (
+                    {filteredData?.map((purchase) => (
                       <tr
                         key={purchase.purchase_id}
                         onClick={() => handleTableRowClick(purchase)}
                       >
+                        <td>{purchase.site_name}</td>
+                        <td>{purchase.date}</td>
+                        <td>
+                          {!!purchase.totalAmount ? purchase.totalAmount : "0"}
+                        </td>
+                        <td>
+                          {!!purchase.paidAmount ? purchase.paidAmount : "0"}
+                        </td>
+                        <td>{!!purchase.balance ? purchase.balance : "0"}</td>
                         <td style={{ whiteSpace: "nowrap" }}>
                           <button
                             style={{
@@ -475,32 +482,33 @@ function Rental_products_view() {
                               backgroundColor: "inherit",
                               display: "inline-block",
                             }}
-                            onClick={() => handleUpdateClick(purchase)}
+                            onClick={(e) =>
+                              handleActionClick(e, purchase, EDIT)
+                            }
                           >
-                            <UpdateIcon />
+                            <EditIcon />
                           </button>
-                          <button
+                          {/* <button
                             style={{
                               border: "none",
                               backgroundColor: "inherit",
                             }}
-                            onClick={() => {
-                              handlePurchaseButtonClick("purchase");
-                              setSelectedVal(purchase);
+                            onClick={(e) => {
+                              handleActionClick(e, purchase, DELETE);
                             }}
                           >
                             <DeleteIcon />
-                          </button>
+                          </button> */}
                         </td>
-                        <td>{purchase.site_name}</td>
-                        <td>{purchase.date1}</td>
-                        <td>{purchase.total}</td>
-                        <td>{purchase.paid}</td>
-                        <td>{purchase.balance}</td>
                       </tr>
                     ))}
                   </tbody>
                 </Table>
+                {filteredData.length <= 0 && (
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <CircularProgress />
+                  </div>
+                )}
               </div>
             </Col>
             {/* second table */}
@@ -513,39 +521,70 @@ function Rental_products_view() {
                   overflowY: "scroll",
                 }}
               >
-                <Table bordered className="table-center">
-                  <thead>
-                    <tr>
-                      <th>site_name</th>
-                      <th>date</th>
-                      <th>prodcut name</th>
-                      <th>days</th>
-                      <th>qty</th>
-                      <th>price</th>
-                      <th>date</th>
-                      <th>todate</th>
-                      <th>total</th>
-                      <th>paid</th>
-                      <th>balance </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* <tr key={record.site_name}>
-                      <td>{record.site_name}</td>
-                      <td>{record.date1}</td>
-                      <td>{record.desc}</td>
-                      <td>{record.labor}</td>
-                      <td>{record.price}</td>
-                      <td>{record.qty}</td>
-                      <td>{record.service}</td>
-                      <td>{record.date}</td>
-                      <td>{record.todate}</td>
-                      <td>{record.total}</td>
-                      <td>{record.paid}</td>
-                      <td>{record.balance}</td>
-                    </tr> */}
-                  </tbody>
-                </Table>
+                {selectedSite?.length > 0 && (
+                  <Table bordered className="table-center">
+                    <thead>
+                      <tr>
+                        <th>Site Name</th>
+                        <th>Date</th>
+                        <th>Product Name</th>
+                        <th>Days</th>
+                        <th>qty</th>
+                        <th>Price</th>
+                        {/* <th>From Date</th> */}
+                        <th>To Date</th>
+                        <th>Total</th>
+                        {/* <th>Paid</th>
+                      <th>Balance </th>
+                      <th>Action </th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedSite.map((data, i) => {
+                        return (
+                          <tr key={i}>
+                            <td>{!!data.site_name ? data.site_name : "-"}</td>
+                            <td>{!!data.date ? data.date : "-"}</td>
+                            <td>
+                              {!!data.product_name ? data.product_name : "-"}
+                            </td>
+                            <td>{!!data.days ? data.days : "-"}</td>
+                            <td>{!!data.qty ? data.qty : "-"}</td>
+                            <td>{!!data.price ? data.price : "-"}</td>
+                            {/* <td>{!!data.fromDate ? data.fromDate : "-"}</td> */}
+                            <td>{!!data.todate ? data.todate : "-"}</td>
+                            <td>{!!data.total ? data.total : "-"}</td>
+                            {/* <td>{!!data.paidAmount ? data.paidAmount : "-"}</td>
+                          <td>{!!data.balance ? data.balance : "-"}</td>
+                          <td style={{ whiteSpace: "nowrap" }}>
+                            <button
+                              style={{
+                                border: "none",
+                                backgroundColor: "inherit",
+                                display: "inline-block",
+                              }}
+                              onClick={(e) => handleActionClick(e, data, EDIT)}
+                            >
+                              <EditIcon />
+                            </button>
+                            <button
+                              style={{
+                                border: "none",
+                                backgroundColor: "inherit",
+                              }}
+                              onClick={(e) => {
+                                handleActionClick(e, data, DELETE);
+                              }}
+                            >
+                              <DeleteIcon />
+                            </button>
+                          </td> */}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                )}
               </div>
             </Col>
             <Col xs={12} md={8} lg={6} className="d-grid gap-2 mt-3">
@@ -698,10 +737,12 @@ function Rental_products_view() {
       </div>
       <CustomDialogue
         isOpen={isOpen}
+        data={data}
         handleClick={handleClickOpen}
+        actionType={actionType}
         maxWidth="sm"
+        getData={getData}
       />
-      <button onClick={handleClickOpen}>click</button>
     </>
   );
 }
@@ -714,6 +755,7 @@ const CustomDialogue = ({
   data,
   actionType,
   maxWidth = "xs",
+  getData,
 }) => {
   return (
     <Dialog
@@ -725,82 +767,144 @@ const CustomDialogue = ({
       aria-describedby="alert-dialog-description"
       maxWidth={maxWidth}
     >
-      <DialogTitle id="alert-dialog-title">Edit Rental</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{actionType} Rental</DialogTitle>
       <Divider />
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {/* <EditAction />
-          <DeleteAction /> */}
-          <EditRentalHistoryAction />
+          {actionType === EDIT && (
+            <EditAction
+              data={data}
+              handleClose={handleClick}
+              getData={getData}
+            />
+          )}
+          {actionType === DELETE && (
+            <DeleteAction
+              data={data}
+              handleClose={handleClick}
+              getData={getData}
+            />
+          )}
+          {actionType === EDIT_RENTAL_HISTORY && (
+            <EditRentalHistoryAction data={data} />
+          )}
         </DialogContentText>
       </DialogContent>
     </Dialog>
   );
 };
 
-const EditAction = (data) => {
+const EditAction = ({ data, handleClose, getData }) => {
+  const [value, setValue] = useState({});
+  const handleChange = (event) => {
+    let newValue = { ...value };
+    if (event.target.name === "paid") {
+      newValue[event.target.name] = event.target.value;
+      newValue.balance = Number(newValue.total) - Number(event.target.value);
+    }
+    setValue({
+      ...newValue,
+    });
+    console.log(newValue);
+  };
+  const handleSave = async () => {
+    if (value.balance >= 0) {
+      toast.success("Data updated successfully");
+      await axios
+        .post(
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateRentalPayment.php",
+          { id: value.id, paid_amount: value.paidAmount }
+        )
+        .then((response) => {
+          getData();
+        })
+        .catch((error) => console.error("Error:", error));
+      handleClose();
+    } else {
+      toast.error("Paid Amount must be equal or Lest than the Total amount");
+    }
+  };
+  useEffect(() => {
+    setValue(data);
+  }, [data]);
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <TextField
-          required
-          id="siteName"
-          label="Site Name"
-          name="siteName"
-          variant="outlined"
-          fullWidth
-        />
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            id="site_name"
+            label="Site Name"
+            name="site_name"
+            variant="outlined"
+            fullWidth
+            value={value?.site_name}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                label="Date"
+                name="date"
+                value={dayjs(value?.date)}
+                disabled
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="total"
+            label="Total Amount"
+            name="total"
+            variant="outlined"
+            fullWidth
+            value={value?.total}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="paid"
+            label="Paid Amount"
+            name="paid"
+            variant="outlined"
+            fullWidth
+            autoFocus
+            onChange={handleChange}
+            value={value?.paid}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="balanceAmount"
+            label="Balance Amount"
+            name="balanceAmount"
+            variant="outlined"
+            fullWidth
+            value={value?.balance}
+            disabled
+          />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            variant="contained"
+            style={{ border: "1px solid" }}
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DatePicker"]}>
-            <DatePicker label="Date" />
-          </DemoContainer>
-        </LocalizationProvider>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          required
-          id="totalAmount"
-          label="Total Amount"
-          name="totalAmount"
-          variant="outlined"
-          fullWidth
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          required
-          id="paidAmount"
-          label="Paid Amount"
-          name="paidAmount"
-          variant="outlined"
-          fullWidth
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          required
-          id="balanceAmount"
-          label="Balance Amount"
-          name="balanceAmount"
-          variant="outlined"
-          fullWidth
-        />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Button variant="contained" style={{ border: "1px solid" }}>
-          Save
-        </Button>
-      </Grid>
-    </Grid>
+    </>
   );
 };
 const EditRentalHistoryAction = (data) => {
@@ -922,14 +1026,30 @@ const EditRentalHistoryAction = (data) => {
     </Grid>
   );
 };
-const DeleteAction = (data) => {
+const DeleteAction = ({ data, handleClose, getData }) => {
+  const handleDelete = async () => {
+    await axios
+      .post(
+        "https://vebbox.in/gvmbackend/controllers/api/put/updateRentalPayment.php",
+        { id: data.id }
+      )
+      .then(() => {
+        toast.success("Data deleted successfully");
+        getData();
+        handleClose();
+      })
+      .catch((error) =>
+        toast.success("Unable to delete this data " + error.message)
+      );
+  };
   return (
-    <div>
-      <center>
-        <h4>Do you want delete?</h4>
-      </center>
-      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-        <Button>Delete</Button>
+    <div
+      style={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+    >
+      <h4>Do you want delete?</h4>
+
+      <div style={{ display: "flex", gap: "24px" }}>
+        <Button onClick={handleDelete}>Delete</Button>
         <Button autoFocus>Cancel</Button>
       </div>
     </div>

@@ -715,6 +715,7 @@ export function Nameinvoice({
         onChange={(e) => handleDataChange(e, index, textboxName)} // Pass index and textboxName to handleDataChange
         value={value} // Use the provided value here
         maxLength={20}
+        fullWidth
       />
     </Col>
   );
