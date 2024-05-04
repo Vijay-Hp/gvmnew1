@@ -108,7 +108,7 @@ function UserGeneral_entry() {
       purchaseId:selectedVal?.purchase_id
     }
     // console.log(payload);
-    await axios.post(`http://localhost/GVM_Backend/controllers/api/delete/purchaseDelete.php`,payload).then(res=>{
+    await axios.post(`https://vebbox.in/gvmbackend/controllers/api/delete/purchaseDelete.php`,payload).then(res=>{
       if(res.data.message==="deleted"){
         // alert("deleted succussfully");
         toast.success("Deleted Successfully!");
@@ -131,7 +131,7 @@ function UserGeneral_entry() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchase.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchase.php"
       );
       setPurchaseData(response.data);
     } catch (error) {

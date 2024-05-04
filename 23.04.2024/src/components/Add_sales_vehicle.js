@@ -100,7 +100,7 @@ function Add_sales_vehicle() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addSalesDetails.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addSalesDetails.php",
           newData
         )
         .then((response) => {

@@ -38,7 +38,7 @@ export const TableContent = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchase.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchase.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -85,7 +85,7 @@ export const TableContent1 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewConstruction.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewConstruction.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -127,7 +127,7 @@ export const TableContent2 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewRental.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -168,7 +168,7 @@ export const TableContent2 = ({ data }) => {
 //   const fetchData = async () => {
 //     try {
 //       const response = await axios.get(
-//         "http://localhost/GVM_Backend/controllers/api/get/viewRental.php"
+//         "https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php"
 //       );
 //       setPurchaseData(response.data);
 //     } catch (error) {
@@ -211,7 +211,7 @@ export const TableContent3 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSalary.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSalary.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -253,7 +253,7 @@ export const TableContent4 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSales.php"
       );
       setPurchaseData(response.data);
     } catch (error) {

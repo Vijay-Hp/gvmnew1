@@ -39,7 +39,7 @@ export const UserTableContent = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchase.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchase.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -85,7 +85,7 @@ export const UserTableContent1 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewConstruction.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewConstruction.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -127,7 +127,7 @@ export const UserTableContent2 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewRental.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -170,7 +170,7 @@ export const UserTableContent3 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSalary.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSalary.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
@@ -212,7 +212,7 @@ export const UserTableContent4 = ({ data }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSales.php"
       );
       setPurchaseData(response.data);
     } catch (error) {

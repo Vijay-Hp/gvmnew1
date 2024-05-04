@@ -132,7 +132,7 @@ function UserAdd_constructionempsal() {
 
      axios
        .post(
-         "http://localhost/GVM_Backend/controllers/api/post/addConstructionDetails.php",
+         "https://vebbox.in/gvmbackend/controllers/api/post/addConstructionDetails.php",
          newData
        )
        .then((response) => {

@@ -120,7 +120,7 @@ function Add_construction_view() {
     // console.log(payload);
     await axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/delete/purchaseDelete.php",
+        "https://vebbox.in/gvmbackend/controllers/api/delete/purchaseDelete.php",
         payload
       )
       .then((res) => {
@@ -136,8 +136,12 @@ function Add_construction_view() {
       });
   };
   const handleCancelClick = () => {
+    // console.log("clicked");
+    
+
     setShowPurchaseForm(true);
     setShowQuitForm(false);
+    
   };
 
   //sorting
@@ -314,7 +318,7 @@ function Add_construction_view() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updatePurchase.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updatePurchase.php",
           newData
         )
         .then((response) => {
@@ -390,6 +394,7 @@ function Add_construction_view() {
   const handleClose = () => {
     setAnchorEl(null);
     setOpen(false);
+    // console.log("clicked");
   };
 
   const dateSubmit = () => {
@@ -405,7 +410,7 @@ function Add_construction_view() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/purchaseFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/purchaseFliter.php",
         data
       )
       .then((response) => {
@@ -460,6 +465,7 @@ function Add_construction_view() {
     setData(purchase);
     setActionType(actionType);
     handleClickOpen();
+    // console.log("clicked");
   };
   const handleTableRowClick = async (data) => {
     await axios
@@ -698,6 +704,7 @@ function Add_construction_view() {
                     key={data.purchase_id}
                     onClick={() => handleTableRowClick(data)}
                   >
+                    
                     <td>{!!data.site_name ? data.site_name : "-"}</td>
                     <td>{!!data.date ? data.date : "-"}</td>
                     <td>{!!data.total ? data.total : "0"}</td>
@@ -723,7 +730,7 @@ function Add_construction_view() {
                           handleActionClick(e, data, DELETE);
                         }}
                       >
-                        <DeleteIcon />
+                        <DeleteIcon style={{backgroundColor:'red'}}/>
                       </button>
                     </td>
                   </tr>

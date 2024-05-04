@@ -72,7 +72,7 @@ function View_salary() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSalary.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSalary.php"
       );
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
@@ -117,7 +117,7 @@ function View_salary() {
     // console.log(payload);
     await axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/delete/salaryDelete.php",
+        "https://vebbox.in/gvmbackend/controllers/api/delete/salaryDelete.php",
         payload
       )
       .then((res) => {
@@ -260,7 +260,7 @@ function View_salary() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updateSalary.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateSalary.php",
           newData
         )
         .then((response) => {
@@ -332,7 +332,7 @@ function View_salary() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/vehicleFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/vehicleFliter.php",
         data
       )
       .then((response) => {

@@ -68,7 +68,7 @@ function Rental_products_view() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewRental.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php"
       );
       setPurchaseData(response.data);
       setFilteredData(response.data);
@@ -137,7 +137,7 @@ function Rental_products_view() {
       // Send the initial POST request to add the purchase payment
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addRentalPayment.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addRentalPayment.php",
           newData
         )
         .then((response) => {
@@ -158,7 +158,7 @@ function Rental_products_view() {
       // Send the PUT request to update the purchase payment
       axios
         .put(
-          "http://localhost/GVM_Backend/controllers/api/put/updateRentalPayment.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateRentalPayment.php",
           updateData
         )
         .then((response) => {
@@ -232,7 +232,7 @@ function Rental_products_view() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/purchaseFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/purchaseFliter.php",
         data
       )
       .then((response) => {
@@ -286,7 +286,7 @@ function Rental_products_view() {
     };
     await axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/delete/rentalDelete.php",
+        "https://vebbox.in/gvmbackend/controllers/api/delete/rentalDelete.php",
         payload
       )
       .then((res) => {

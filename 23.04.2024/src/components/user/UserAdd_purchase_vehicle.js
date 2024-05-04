@@ -102,7 +102,7 @@ function UserAdd_purchase_vehicle() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addPurchaseDetails.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addPurchaseDetails.php",
           newData
         )
         .then((response) => {

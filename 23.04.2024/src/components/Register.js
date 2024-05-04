@@ -50,7 +50,7 @@ function Register() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addUserDetails.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addUserDetails.php",
           newData
         )
         .then((response) => {

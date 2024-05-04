@@ -120,7 +120,7 @@ const deleteData=async()=>{
     salesId:selectedVal?.sales_id
   }
   // console.log(payload);
-  await axios.post(`http://localhost/GVM_Backend/controllers/api/delete/salesDelete.php`,payload).then(res=>{
+  await axios.post(`https://vebbox.in/gvmbackend/controllers/api/delete/salesDelete.php`,payload).then(res=>{
     if(res.data.message==="deleted"){
       // alert("deleted succussfully");
       toast.success("Deleted Successfully!");
@@ -144,7 +144,7 @@ const deleteData=async()=>{
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSales.php"
       );
       setPurchaseData(response.data);
     } catch (error) {

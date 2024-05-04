@@ -32,7 +32,7 @@ const handleFetchData = async () => {
         "purchaseId":"12"
       }
   
-      const res = await axios.get('http://localhost/GVM_Backend/controllers/api/get/fetch_PurchaseDetails.php',data_purchase);
+      const res = await axios.get('https://vebbox.in/gvmbackend/controllers/api/get/fetch_PurchaseDetails.php',data_purchase);
       console.log("data",data_purchase);
       console.log(res.data);
       // Update state or do other operations with the response data

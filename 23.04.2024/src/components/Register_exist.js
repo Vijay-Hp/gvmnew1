@@ -101,7 +101,7 @@ function RegisterExist() {
       email:selectedVal?.email
     }
     // console.log(payload);
-    await axios.post(`http://localhost/GVM_Backend/controllers/api/delete/userDelete.php`,payload).then(res=>{
+    await axios.post(`https://vebbox.in/gvmbackend/controllers/api/delete/userDelete.php`,payload).then(res=>{
       if(res.data.message==="deleted"){
         toast.success("Deleted Successfully!");
         setShowPurchaseForm(true);
@@ -123,7 +123,7 @@ function RegisterExist() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewUser.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewUser.php"
       );
       setPurchaseData(response.data);
     } catch (error) {
