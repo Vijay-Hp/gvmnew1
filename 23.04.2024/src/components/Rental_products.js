@@ -49,6 +49,7 @@ function Rental_products() {
   const [purchaseData, setPurchaseData] = useState([]);
   const [rows, setRows] = useState([createRow("", 0, 0)]);
   const [taxRate, setTaxRate] = useState(0);
+  const [taxAmount, setTaxAmount] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [value, setValue] = useState({});
   const navigate = useNavigate();
@@ -115,6 +116,7 @@ function Rental_products() {
 
   const handleDataChange = (e, index, field) => {
     const { name, value } = e.target;
+    console.log(name, value);
     const updatedRows = [...rows];
     if (updatedRows[index]) {
       updatedRows[index][name] = value;
@@ -160,9 +162,10 @@ function Rental_products() {
 
   const handleTaxRateChange = (e) => {
     const { value } = e.target;
+    setTaxAmount((subtotal * value) / 100);
     setTaxRate(parseFloat(value));
   };
-
+  console.log(taxAmount);
   function createRow(
     product_name,
     qty,
@@ -396,7 +399,7 @@ function Rental_products() {
                           handleDataChange={handleDataChange}
                           textboxName="total"
                           index={-3}
-                          value={subtotal + subtotal * (taxRate / 100)}
+                          value={Number(subtotal) + Number(taxAmount)}
                         />
                       </TableCell>
                     </TableRow>
