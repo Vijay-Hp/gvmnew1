@@ -487,7 +487,7 @@ function Add_construction_view() {
   const getData = async () => {
     setIsLoading(true);
     await axios
-      .get("https://vebbox.in/gvmbackend/controllers/api/get/viewRental.php")
+      .get("https://vebbox.in/gvmbackend/controllers/api/get/viewExpense.php")
       .then((response) => {
         setTableData(response.data);
       })
@@ -690,11 +690,11 @@ function Add_construction_view() {
             <Table bordered className="table-center">
               <thead>
                 <tr>
-                  <th>Site Name</th>
+                  <th>Building Name</th>
+                  <th>Expenses Type</th>
+                  <th>Location</th>
                   <th>Date</th>
-                  <th>Total Amount</th>
-                  <th>Paid Amount</th>
-                  <th>Balance Amount</th>
+                  <th>Total</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -704,12 +704,16 @@ function Add_construction_view() {
                     key={data.purchase_id}
                     onClick={() => handleTableRowClick(data)}
                   >
+
                     
                     <td>{!!data.site_name ? data.site_name : "-"}</td>
                     <td>{!!data.date ? data.date : "-"}</td>
+                    <td>{!!data.building_name ? data.building_name : "-"}</td>
+                    <td>{!!data.expense_type ? data.expense_type : "-"}</td>
+                    <td>{!!data.location ? data.location : "0"}</td>
+                    <td>{!!data.date ? data.date : "0"}</td>
+
                     <td>{!!data.total ? data.total : "0"}</td>
-                    <td>{!!data.paid ? data.paid : "0"}</td>
-                    <td>{!!data.balance ? data.balance : "0"}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       {/* <button
                         style={{
@@ -1330,7 +1334,9 @@ const DeleteAction = ({ data, handleClose, getData }) => {
 
       <div style={{ display: "flex", gap: "24px" }}>
         <Button onClick={handleDelete}>Delete</Button>
-        <Button autoFocus>Cancel</Button>
+        <Button autoFocus onClick={handleClose}>
+          Cancel
+        </Button>
       </div>
     </div>
   );

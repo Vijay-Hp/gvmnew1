@@ -1172,7 +1172,9 @@ const DeleteAction = ({ data, handleClose, getData }) => {
 
       <div style={{ display: "flex", gap: "24px" }}>
         <Button onClick={handleDelete}>Delete</Button>
-        <Button autoFocus>Cancel</Button>
+        <Button autoFocus onClick={handleClose}>
+          Cancel
+        </Button>
       </div>
     </div>
   );
