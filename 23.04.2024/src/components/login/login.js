@@ -18,7 +18,7 @@ function Login() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewUser.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewUser.php"
       );
       console.log("Fetched data:", response.data);
       setPurchaseData(response.data);

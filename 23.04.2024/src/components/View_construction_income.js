@@ -92,7 +92,7 @@ function View_construction_income() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchase.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchase.php"
       );
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
@@ -139,7 +139,7 @@ function View_construction_income() {
     // console.log(payload);
     await axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/delete/purchaseDelete.php",
+        "https://vebbox.in/gvmbackend/controllers/api/delete/purchaseDelete.php",
         payload
       )
       .then((res) => {
@@ -337,7 +337,7 @@ function View_construction_income() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updatePurchase.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updatePurchase.php",
           newData
         )
         .then((response) => {
@@ -432,7 +432,7 @@ function View_construction_income() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/purchaseFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/purchaseFliter.php",
         data
       )
       .then((response) => {

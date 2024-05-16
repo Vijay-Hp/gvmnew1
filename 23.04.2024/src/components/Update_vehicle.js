@@ -61,7 +61,7 @@ function Update_vehicle() {
         vehicleNo: purchaseData?.vehicle_no,
       };
       const url =
-        "http://localhost/GVM_Backend/controllers/api/get/fetch_VehicleDetails.php";
+        "https://vebbox.in/gvmbackend/controllers/api/get/fetch_VehicleDetails.php";
       const response = await axios.post(url, payload);
       const data = response.data;
       const info = data?.length ? data[0] : "";
@@ -100,7 +100,7 @@ function Update_vehicle() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updateVehicle.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateVehicle.php",
           newData
         )
         .then((response) => {

@@ -73,7 +73,7 @@ function Update_purchase() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchase.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchase.php"
       );
       setPurchaseData(response.data);
       setFilteredData(response.data);
@@ -151,7 +151,7 @@ function Update_purchase() {
       // Send the initial POST request to add the purchase payment
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addPurchasePayment.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addPurchasePayment.php",
           newData
         )
         .then((response) => {
@@ -173,7 +173,7 @@ function Update_purchase() {
       // Send the PUT request to update the purchase payment
       // axios
       //   .put(
-      //     "http://localhost/GVM_Backend/controllers/api/put/updatePurchasePayment.php",
+      //     "https://vebbox.in/gvmbackend/controllers/api/put/updatePurchasePayment.php",
       //     updateData
       //   )
       //   .then((response) => {

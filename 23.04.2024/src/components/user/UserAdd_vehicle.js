@@ -71,7 +71,7 @@ function UserAdd_vehicle() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addVehicleDetails.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addVehicleDetails.php",
           newData
         )
         .then((response) => {

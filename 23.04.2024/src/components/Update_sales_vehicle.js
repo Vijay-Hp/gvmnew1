@@ -106,7 +106,7 @@ function Update_sales_vehicle() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updateSales.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateSales.php",
           newData
         )
         .then((response) => {
