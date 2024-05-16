@@ -72,7 +72,7 @@ function Add_salary() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addSalaryDetails.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addSalaryDetails.php",
           newData
         )
         .then((response) => {

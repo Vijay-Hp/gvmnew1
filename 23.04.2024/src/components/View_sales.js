@@ -72,7 +72,7 @@ function View_sales() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewSales.php"
       );
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
@@ -119,7 +119,7 @@ function View_sales() {
     // console.log(payload);
     await axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/delete/salesDelete.php",
+        "https://vebbox.in/gvmbackend/controllers/api/delete/salesDelete.php",
         payload
       )
       .then((res) => {
@@ -322,7 +322,7 @@ function View_sales() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updateSales.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateSales.php",
           newData
         )
         .then((response) => {
@@ -413,7 +413,7 @@ function View_sales() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/salesFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/salesFliter.php",
         data
       )
       .then((response) => {

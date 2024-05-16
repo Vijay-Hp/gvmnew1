@@ -62,7 +62,7 @@ const deleteData=async()=>{
     buildingName:selectedVal?.building_name
   }
   // console.log(payload);
-  await axios.post(`http://localhost/GVM_Backend/controllers/api/delete/constructionDelete.php`,payload).then(res=>{
+  await axios.post(`https://vebbox.in/gvmbackend/controllers/api/delete/constructionDelete.php`,payload).then(res=>{
     if(res.data.message==="deleted"){
       // alert("deleted succussfully");
       toast.success("Deleted Successfully!");
@@ -86,7 +86,7 @@ const deleteData=async()=>{
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewConstruction.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewConstruction.php"
       );
       setPurchaseData(response.data);
     } catch (error) {

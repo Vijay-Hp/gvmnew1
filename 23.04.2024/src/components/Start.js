@@ -72,7 +72,7 @@ const Start = () => {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/post/addRentalDetails.php",
+          "https://vebbox.in/gvmbackend/controllers/api/post/addRentalDetails.php",
           newData
         )
         .then((response) => {

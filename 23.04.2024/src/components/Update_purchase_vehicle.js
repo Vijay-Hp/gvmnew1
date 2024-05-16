@@ -119,7 +119,7 @@
 
         axios
           .post(
-            "http://localhost/GVM_Backend/controllers/api/put/updatePurchase.php",
+            "https://vebbox.in/gvmbackend/controllers/api/put/updatePurchase.php",
             newData
           )
           .then((response) => {

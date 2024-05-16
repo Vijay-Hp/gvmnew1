@@ -70,7 +70,7 @@ function Rental_payment() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewPurchasePayment.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchasePayment.php"
       );
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
@@ -117,7 +117,7 @@ function Rental_payment() {
     // console.log(payload);
     await axios
       .post(
-        `http://localhost/GVM_Backend/controllers/api/delete/purchaseDelete.php`,
+        `https://vebbox.in/gvmbackend/controllers/api/delete/purchaseDelete.php`,
         payload
       )
       .then((res) => {
@@ -237,7 +237,7 @@ function Rental_payment() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/purchaseFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/purchaseFliter.php",
         data
       )
       .then((response) => {

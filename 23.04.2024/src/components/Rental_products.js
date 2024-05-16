@@ -61,7 +61,7 @@ function Rental_products() {
   // const fetchData = async () => {
   //   try {
   //     const response = await axios.get(
-  //       "http://localhost/GVM_Backend/controllers/api/get/viewSales.php"
+  //       "https://vebbox.in/gvmbackend/controllers/api/get/viewSales.php"
   //     );
   //     setPurchaseData(response.data);
   //     setFilteredData(response.data);

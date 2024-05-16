@@ -72,7 +72,7 @@ function View_vehicle() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/GVM_Backend/controllers/api/get/viewVehicle.php"
+        "https://vebbox.in/gvmbackend/controllers/api/get/viewVehicle.php"
       );
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
@@ -117,7 +117,7 @@ function View_vehicle() {
     // console.log(payload);
     await axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/delete/vehicleDelete.php",
+        "https://vebbox.in/gvmbackend/controllers/api/delete/vehicleDelete.php",
         payload
       )
       .then((res) => {
@@ -269,7 +269,7 @@ function View_vehicle() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updateVehicle.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateVehicle.php",
           newData
         )
         .then((response) => {
@@ -344,7 +344,7 @@ function View_vehicle() {
     // Make an Axios POST request with the data object as the request body
     axios
       .post(
-        "http://localhost/GVM_Backend/controllers/api/get/vehicleFliter.php",
+        "https://vebbox.in/gvmbackend/controllers/api/get/vehicleFliter.php",
         data
       )
       .then((response) => {

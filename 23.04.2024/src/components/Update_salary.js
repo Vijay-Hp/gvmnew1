@@ -58,7 +58,7 @@ function Update_salary() {
         const payload = {
             employeeId: purchaseData?.employee_id
         };
-        const url = "http://localhost/GVM_Backend/controllers/api/get/fetch_SalaryDetails.php";
+        const url = "https://vebbox.in/gvmbackend/controllers/api/get/fetch_SalaryDetails.php";
         const response = await axios.post(url, payload);
         const data = response.data;
         const info = data?.length ? data[0] : '';
@@ -92,7 +92,7 @@ function Update_salary() {
 
       axios
         .post(
-          "http://localhost/GVM_Backend/controllers/api/put/updateSalary.php",
+          "https://vebbox.in/gvmbackend/controllers/api/put/updateSalary.php",
           newData
         )
         .then((response) => {
