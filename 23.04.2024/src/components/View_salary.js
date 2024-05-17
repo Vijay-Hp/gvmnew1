@@ -47,6 +47,7 @@ import { EditCalendarOutlined } from "@mui/icons-material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 
 function View_salary() {
+
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit">
       Salary
@@ -70,10 +71,15 @@ function View_salary() {
   }, []);
 
   const fetchData = async () => {
+    console.log("hii")
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         "https://vebbox.in/gvmbackend/controllers/api/get/viewSalary.php"
       );
+     
+      // console.log(response.data);
+
+
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
       setFilteredData(response.data);
@@ -82,6 +88,7 @@ function View_salary() {
     }
   };
 
+  
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);

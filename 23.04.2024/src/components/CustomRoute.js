@@ -9,10 +9,13 @@ export function PublicRoute() {
   return (
     <Routes>
       {
+
         publicRoute.map(({ path, Component }, index) => {
-          // console.log(path)
+          
           return (
+            
             <Route path={path} element={<Component />} />
+
           )
         })
       }

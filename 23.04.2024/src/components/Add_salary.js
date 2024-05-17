@@ -68,7 +68,8 @@ function Add_salary() {
         payment_method: purchaseData.payment_method,
       };
 
-      console.log(newData);
+      // console.log(newData);
+      // console.log("testing");
 
       axios
         .post(

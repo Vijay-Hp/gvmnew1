@@ -74,6 +74,7 @@ function View_purchase() {
       const response = await axios.get(
         "https://vebbox.in/gvmbackend/controllers/api/get/viewPurchase.php"
       );
+      // console.log(response.data);
       setPurchaseDataContext(response.data);
       setPurchaseData1(response.data);
       setFilteredData(response.data);

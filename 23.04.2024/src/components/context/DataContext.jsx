@@ -11,13 +11,13 @@ DataContextProvider({ children }) {
   const [purchaseData, setPurchaseData] = useState({});
 
   const updatePurchaseData = (data) => {
-    console.log("updatePurchaseData");
+    // console.log("updatePurchaseData");
     setPurchaseData(data);
   };
   const updateDropdownPurchaseData = (data) => {
     setPurchaseData({ ...purchaseData, dropDownValue: data });
   };
-  console.log("purchaseData", purchaseData);
+  // console.log("purchaseData", purchaseData);
   return (
     <dataContext.Provider
       value={{
