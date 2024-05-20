@@ -1,14 +1,13 @@
 import React, { createContext, useState } from "react";
 
 export const dataContext = createContext({
-  purchaseData: {},
+  purchaseData: [],
   updatePurchaseData: () => {},
   updateDropdownPurchaseData: () => {},
 });
 
-export default function 
-DataContextProvider({ children }) {
-  const [purchaseData, setPurchaseData] = useState({});
+export default function DataContextProvider({ children }) {
+  const [purchaseData, setPurchaseData] = useState([]);
 
   const updatePurchaseData = (data) => {
     console.log("updatePurchaseData");

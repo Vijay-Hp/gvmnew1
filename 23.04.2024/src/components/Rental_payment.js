@@ -83,7 +83,7 @@ function Rental_payment() {
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    const filtered = purchaseData.filter(
+    const filtered = purchaseData?.filter(
       (item) =>
         item.vendor_name.toLowerCase().includes(query.toLowerCase()) ||
         item.product_name.toLowerCase().includes(query.toLowerCase())

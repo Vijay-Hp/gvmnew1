@@ -105,7 +105,6 @@ function Add_purchase_vehicle() {
       console.log(newData);
       axios
         .post(
-         
           "https://vebbox.in/gvmbackend/controllers/api/post/addPurchaseDetails.php",
           newData
         )
@@ -153,7 +152,7 @@ function Add_purchase_vehicle() {
 
   useEffect(() => {
     const balance = calculateBalanceAmount1();
-    const totalAmount1 = calculateTotalAmount1(); 
+    const totalAmount1 = calculateTotalAmount1();
     setPurchaseData({
       ...purchaseData,
       balance_amount1: balance,
